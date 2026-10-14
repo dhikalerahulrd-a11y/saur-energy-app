@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Saur Energy - Solar Calculator</title>
+    <style>
+        body { font-family: Arial; background-color: #f0f8ff; text-align: center; padding: 50px; }
+        .box { background: white; width: 400px; margin: auto; padding: 30px; border-radius: 15px; box-shadow: 0px 0px 15px gray; }
+        input { padding: 10px; width: 80%; margin: 10px; font-size: 18px; }
+        button { padding: 12px 25px; background-color: #ff9800; color: white; border: none; font-size: 18px; border-radius: 8px; cursor: pointer; }
+        .result { margin-top: 20px; background: #e8f5e9; padding: 15px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Saur Energy Solution</h1>
+        <h3>Solar Bill Calculator</h3>
+
+        <form method="POST">
+            <input type="number" name="units" placeholder="Units टाका उदा. 300" required>
+            <br>
+            <button type="submit">Bill बघा</button>
+        </form>
+
+        {% if monthly_bill %}
+        <div class="result">
+            <h3>Report for {{ units }} Units</h3>
+            <p>Monthly Bill: <b>Rs {{ monthly_bill }}</b></p>
+            <p>Yearly Bill: <b>Rs {{ yearly_bill }}</b></p>
+            <h2 style="color: green;">Yearly Saving: Rs {{ saving }}</h2>
+            <p>25 Years Saving: <b>Rs {{ total_saving }}</b></p>
+            <a href="https://wa.me/+919552275943?text=मला {{ units }} Units साठी Solar हवाय">WhatsApp वर संपर्क करा</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
