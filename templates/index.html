@@ -1,36 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Saur Energy - Solar Calculator</title>
-    <style>
-        body { font-family: Arial; background-color: #f0f8ff; text-align: center; padding: 50px; }
-        .box { background: white; width: 400px; margin: auto; padding: 30px; border-radius: 15px; box-shadow: 0px 0px 15px gray; }
-        input { padding: 10px; width: 80%; margin: 10px; font-size: 18px; }
-        button { padding: 12px 25px; background-color: #ff9800; color: white; border: none; font-size: 18px; border-radius: 8px; cursor: pointer; }
-        .result { margin-top: 20px; background: #e8f5e9; padding: 15px; border-radius: 10px; }
-    </style>
+<title>Saur Energy</title>
+<style>
+body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+input { padding: 10px; margin: 5px; width: 260px; }
+button { padding: 12px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
+.result-box { background: white; padding: 20px; margin-top: 20px; border-radius: 10px; }
+.wa-customer { background: #25D366; color: white; padding: 12px 20px; border-radius: 5px; text-decoration: none; display: inline-block; margin: 5px; }
+.wa-owner { background: #000; color: white; padding: 12px 20px; border-radius: 5px; text-decoration: none; display: inline-block; margin: 5px; }
+</style>
 </head>
 <body>
-    <div class="box">
-        <h1>Saur Energy Solution</h1>
-        <h3>Solar Bill Calculator</h3>
 
-        <form method="POST">
-            <input type="number" name="units" placeholder="Units टाका उदा. 300" required>
-            <br>
-            <button type="submit">Bill बघा</button>
-        </form>
+<h1>☀️ Saur Energy - Bill Calculator</h1>
 
-        {% if monthly_bill %}
-        <div class="result">
-            <h3>Report for {{ units }} Units</h3>
-            <p>Monthly Bill: <b>Rs {{ monthly_bill }}</b></p>
-            <p>Yearly Bill: <b>Rs {{ yearly_bill }}</b></p>
-            <h2 style="color: green;">Yearly Saving: Rs {{ saving }}</h2>
-            <p>25 Years Saving: <b>Rs {{ total_saving }}</b></p>
-            <a href="https://wa.me/+919552275943?text=मला {{ units }} Units साठी Solar हवाय">WhatsApp वर संपर्क करा</a>
-        </div>
-        {% endif %}
-    </div>
+<form method="POST">
+    <input type="number" name="units" placeholder="Units टाका उदा. 300" required><br>
+    <input type="text" name="name" placeholder="तुमचं नाव" required><br>
+    <input type="text" name="phone" placeholder="Customer चा मोबाईल नंबर" required><br>
+    <input type="text" name="city" placeholder="गाव / शहर"><br><br>
+    <button type="submit">Bill बघा आणि Save करा</button>
+</form>
+
+{% if result %}
+<h2 style="color:green;">{{ result }}</h2>
+{% endif %}
+
+{% if monthly_bill %}
+<div class="result-box">
+    <h3>Report for {{ units }} Units</h3>
+    <h2>Monthly Bill: Rs. {{ monthly_bill }}</h2>
+    <p>Customer: {{ request.form.get('name') }} ({{ request.form.get('phone') }}) - {{ request.form.get('city') }}</p>
+    <hr>
+
+    <!-- BUTTON 1: Customer ला Bill पाठवायला -->
+    <a class="wa-customer" 
+       href="https://wa.me/91{{ request.form.get('phone') }}?text=नमस्कार%20{{ request.form.get('name') }}!%20Saur%20Energy%20कडून!%20तुमच्या%20{{ units }}%20Units%20चा%20Bill%20Rs.%20{{ monthly_bill }}%20आहे.%20Solar%20लावून%20तुम्ही%20पैसे%20वाचवू%20शकता!%20🙏"
+       target="_blank">
+       1️⃣ Send Bill On Your WhatsApp
+    </a>
+
+    <!-- BUTTON 2: तुला Enquiry येईल - इथे तुझा नंबर टाक! -->
+    <a class="wa-owner" 
+       href="https://wa.me/919552275943?text=🔔%20नवीन%20Enquiry%20आली!%0Aनाव:%20{{ request.form.get('name') }}%0Aनंबर:%20{{ request.form.get('phone') }}%0Aगाव:%20{{ request.form.get('city') }}%0AUnits:%20{{ units }}%0ABill:%20Rs.%20{{ monthly_bill }}"
+       target="_blank">
+       2️⃣ Reached Us on WhatsApp
+    </a>
+    
+    <p><small>वरचा काळा Button दाबल्यावर तुला स्वतःला WhatsApp वर Enquiry येईल</small></p>
+</div>
+{% endif %}
+
+<br><hr>
+<a href="/leads">📋 सगळे Leads बघा</a>
+
 </body>
 </html>

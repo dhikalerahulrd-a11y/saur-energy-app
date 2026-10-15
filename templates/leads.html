@@ -1,0 +1,8 @@
+<h1>सगळे Leads</h1>
+<a href="/">Home ला जा</a>
+<hr>
+{% for lead in leads %}
+<p><b>{{ lead.name }}</b> - {{ lead.phone }} - {{ lead.city }} - {{ lead.units }} Units - Rs.{{ lead.bill }}</p>
+{% else %}
+<p>अजून एकही Lead नाही!</p>
+{% endfor %}
