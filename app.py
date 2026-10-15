@@ -1,58 +1,42 @@
-from flask import Flask, render_template, request
-from flask_pymongo import PyMongo
 import os
+from flask import Flask, render_template, request, redirect
+from flask_pymongo import PyMongo
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = os.getenv("MONGO_URI")
+
+
+mongo_uri = os.environ.get("MONGO_URI") or os.getenv("MONGO_URI")
+
+if not mongo_uri:
+    print("ERROR: MONGO_URI not found in Environment!")
+else:
+    print(f"MONGO_URI loaded: {mongo_uri[:20]}...")
+
+app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
-@app.route("/test-db")
-def test_db():
-    try:
-        mongo.db.test_collection.insert_one({"status": "OK"})
-        return "<h1>✅ Atlas Connected!</h1>"
-    except Exception as e:
-        return f"<h1>❌ Error: {e}</h1>"
-
-@app.route("/", methods=["GET", "POST"])
+@app.route('/')
 def index():
-    result = None
-    monthly_bill = None
-    units = None
+    return render_template('index.html')
 
-    if request.method == "POST":
-        try:
-            units = request.form.get("units")
-            name = request.form.get("name")
-            phone = request.form.get("phone")
-            city = request.form.get("city")
+@app.route('/submit', methods=['POST'])
+def submit():
+   
+    name = request.form.get('name')
+    phone = request.form.get('phone')
+    bill = request.form.get('bill')
+    mongo.db.leads.insert_one({"name": name, "phone": phone, "bill": bill})
+    return redirect('/')
 
-            # तुझा साधा Bill Calculation
-            monthly_bill = float(units) * 8  
+@app.route('/leads')
+def leads():
+    all_leads = mongo.db.leads.find()
+    return render_template('leads.html', leads=all_leads)
 
-            # Database मध्ये Save
-            if name and phone:
-                mongo.db.leads.insert_one({
-                    "name": name,
-                    "phone": phone,
-                    "city": city,
-                    "units": units,
-                    "bill": monthly_bill
-                })
-                result = f"धन्यवाद {name}! Data Save झाला!"
-
-        except Exception as e:
-            result = f"Error: {e}"
-
-    return render_template("index.html", result=result, monthly_bill=monthly_bill, units=units)
-
-@app.route("/leads")
-def show_leads():
-    all_leads = list(mongo.db.leads.find())
-    return render_template("leads.html", leads=all_leads)
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
